@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CategorySampahC;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,8 @@ use App\Http\Controllers\CategorySampahC;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index'])->name('index');
+
 
 Route::get('/sampah', [CategorySampahC::class, 'sampah'])->name('sampah');
 Route::post('/', [CategorySampahC::class, 'post'])->name('hitung');
@@ -36,7 +36,9 @@ Route::group([
         'prefix' => 'Sampah',
     ], function() {
     Route::get('/', [CategorySampahC::class, 'edit_sampah'])->name('edit_sampah');
+    Route::get('/tambah', [CategorySampahC::class, 'tambah_sampah'])->name('tambah_sampah');
+    Route::post('/tambah/store', [CategorySampahC::class, 'store'])->name('store');
     Route::get('/{$id}', [CategorySampahC::class, 'edited'])->name('edited');
-    Route::delete('/{id}', [CategorySampahC::class, 'destroy'])->name('sampah-delete');
+    Route::put('/delete/{id}', [CategorySampahC::class, 'destroy'])->name('sampah-delete');
      });
 });

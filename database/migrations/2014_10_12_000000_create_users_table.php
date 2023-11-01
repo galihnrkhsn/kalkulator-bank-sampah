@@ -25,6 +25,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('harga_kg');
+            $table->tinyInteger('status');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -32,6 +33,7 @@ return new class extends Migration
         Schema::create('history', function (Blueprint $table) {
             $table->id();
             $table->string('total');
+            $table->foreignId('category_id')->constrained('category')->onUpdate('cascade')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
         });

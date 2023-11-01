@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\History;
 
 class CategorySampahC extends Controller
 {
@@ -17,43 +18,61 @@ class CategorySampahC extends Controller
     public function edit_sampah()
     {
         return view('sampah.edit', [
-            'category' => Category::all(),
+            'category' => Category::where('status', Category::STATUS_AKTIF)->get(),
         ]);
-    }
-
-    public function edited()
-    {
-        return view('sampah.edited');
-    }
-
-    public function update($id ,Request $request)
-    {
-    $category->nama = $request->input('nama');
-    $category->harga_kg = $request->input('harga_kg');
-    $category->save();
-    return redirect()->route('edit')->with('success', 'Data berhasil diperbarui.');;
     }
 
     public function destroy($id)
     {
         $category = Category::find($id);
-        $category->delete();
-        return redirect()->route('category');
+        $category->status= Category::STATUS_NONAKTIF;
+        $category->save();
+        return redirect()->back();
     }
 
     public function post(Request $request)
     {
+
         $category = [
             "nama" => $request['nama'],
             "berat_kg" => $request['harga_kg'],
         ];
+
+        if ($category['berat_kg'] < 0) {
+            return redirect()->back();
+        }
         $harga = Category::where('id', $category['nama'])->first();
 
-        $harga = (int) $harga->harga_kg * $category['berat_kg'];
-
+        $total = (int) $harga->harga_kg * $category['berat_kg'];
+        // dd($harga);
+        $category = History::create([
+            'total' => (string) $total,
+            'category_id' => $harga->id,
+        ]);
         return response()->json([
             "message" => "succes",
-            "data" => $harga
+            "data" => $total
         ]);
+    }
+
+    public function tambah_sampah(Request $req){
+        $category = Category::where('id', $req['id'])->first();
+        return view('sampah.tambah', compact('category'));
+    }
+
+    public function store(Request $req)
+    {
+        if (isset($req['id']) && $req['id']!= null ) {
+            $category = Category::where('id', $req['id'])->first();
+            $category->nama=$req['nama'];
+            $category->harga_kg=$req['harga_kg'];
+            $category->save();
+        } else {
+            Category::create([
+                'nama' => $req['nama'],
+                'harga_kg' => $req['harga_kg'],
+            ]);
+        }
+        return redirect()->route('edit_sampah');
     }
 }

@@ -43,6 +43,7 @@
         </div>
     </div>
 
+
     <script>
     function loadDoc() {
     const xhttp = new XMLHttpRequest();
@@ -54,22 +55,29 @@
         const nama1=nama.value;
         const harga_kg=document.getElementById("berat_kg")
         const harga_kg1=harga_kg.value;
-    xhttp.open("POST", "{{ route('hitung') }}?nama="+nama1+'&harga_kg='+harga_kg1, true);
-    xhttp.setRequestHeader("X-CSRF-TOKEN", csrfToken);
-    xhttp.send();
-    xhttp.onload = function() {
-    if (this.status === 200) {
-        const response = JSON.parse(this.responseText);
-        if (response.message === "succes") {
-            const hasilElement = document.getElementById("hasil");
-            hasilElement.innerHTML = "Harga: " + response.data;
+        console.log(harga_kg1);
+        if (harga_kg1 < 0) {
+            const peringatan = document.getElementById("hasil");
+            peringatan.innerHTML = "berat tidak boleh minus ";
         } else {
-            console.error("Gagal mendapatkan data dari server.");
+            xhttp.open("POST", "{{ route('hitung') }}?nama="+nama1+'&harga_kg='+harga_kg1, true);
+            xhttp.setRequestHeader("X-CSRF-TOKEN", csrfToken);
+            xhttp.send();
+            xhttp.onload = function() {
+            if (this.status === 200) {
+                const response = JSON.parse(this.responseText);
+                if (response.message === "succes") {
+                    const hasilElement = document.getElementById("hasil");
+                    hasilElement.innerHTML = "Harga: " + response.data;
+                } else {
+                    console.error("Gagal mendapatkan data dari server.");
+                }
+            } else {
+                console.error("Gagal mengakses server.");
+            }
         }
-    } else {
-        console.error("Gagal mengakses server.");
-    }
-}
+    }
+
     }
     </script>
 

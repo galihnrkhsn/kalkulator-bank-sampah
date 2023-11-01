@@ -3,6 +3,8 @@
         <div class="mb-2 border-solid border-gray-300 rounded border shadow-sm w-full">
             <div class="bg-gray-200 px-2 py-3 border-solid border-gray-200 border-b">
                 Full Table
+
+                <a href="{{ route('tambah_sampah') }}" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors">Tambah</a>
             </div>
             <div class="p-3">
                 <table class="table-responsive w-full rounded">
@@ -19,14 +21,14 @@
                             <td class="border px-4 py-2">{{ $c->nama }}</td>
                             <td class="border px-4 py-2">{{ $c->harga_kg }}</td>
                             <td class="border px-4 py-2">
-                                <a class="bg-teal-300 cursor-pointer rounded p-1 mx-1 text-white" href="{{ route('edited', $c->id) }}">
+                                <a class="bg-teal-300 cursor-pointer rounded p-1 mx-1 text-white" href="{{ route('tambah_sampah', ['id'=>$c->id]) }}">
                                         <i class="fas fa-edit"></i></a>
                             <form action="{{ route('sampah-delete', $c->id) }}" method="POST">
                                 @csrf
-                                @method('delete')
-                                <a class="bg-teal-300 cursor-pointer rounded p-1 mx-1 text-red-500" onclick="return confirm('Are you sure?')">
+                                @method('put')
+                                <button class="bg-teal-300 cursor-pointer rounded p-1 mx-1 text-red-500" type="submit" >
                                         <i class="fas fa-trash"></i>
-                                </a>
+                                </button>
                                 </form>
                             </td>
                         </tr>
